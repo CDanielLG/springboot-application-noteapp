@@ -1,5 +1,0 @@
-com\ensolver\springboot\app\notes\repositories\NoteRepository.class
-com\ensolver\springboot\app\notes\service\NoteService.class
-com\ensolver\springboot\app\notes\controllers\NotesController.class
-com\ensolver\springboot\app\notes\entity\Note.class
-com\ensolver\springboot\app\notes\SpringbootApplicationNoteappApplication.class
