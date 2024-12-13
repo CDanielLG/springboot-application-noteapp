@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ensolver.springboot.app.notes.entity.Note;
 import com.ensolver.springboot.app.notes.service.NoteService;
 
-@CrossOrigin(origins = "https://springboot-application-noteapp.onrender.com") // Permitir CORS desde el origen específico
+@CrossOrigin(origins = "https://noteensolvers.web.app") // Permitir CORS desde el origen específico
 @RestController
 @RequestMapping("/api/notes")
 public class NotesController {
