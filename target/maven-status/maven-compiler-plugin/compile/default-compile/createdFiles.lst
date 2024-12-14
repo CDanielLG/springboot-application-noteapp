@@ -1,5 +1,14 @@
 com\ensolver\springboot\app\notes\repositories\NoteRepository.class
-com\ensolver\springboot\app\notes\service\NoteService.class
-com\ensolver\springboot\app\notes\controllers\NotesController.class
 com\ensolver\springboot\app\notes\entity\Note.class
+com\ensolver\springboot\app\notes\controllers\RegistrationController.class
+com\ensolver\springboot\app\notes\security\JwtAuthenticationFilter.class
+com\ensolver\springboot\app\notes\security\SecurityConfig.class
 com\ensolver\springboot\app\notes\SpringbootApplicationNoteappApplication.class
+com\ensolver\springboot\app\notes\service\CustomUserDetailsService.class
+com\ensolver\springboot\app\notes\service\NoteService.class
+com\ensolver\springboot\app\notes\service\RegistrationService.class
+com\ensolver\springboot\app\notes\repositories\UserRepository.class
+com\ensolver\springboot\app\notes\entity\User.class
+com\ensolver\springboot\app\notes\DTO\RegisterRequest.class
+com\ensolver\springboot\app\notes\controllers\NotesController.class
+com\ensolver\springboot\app\notes\security\JwtUtils.class
