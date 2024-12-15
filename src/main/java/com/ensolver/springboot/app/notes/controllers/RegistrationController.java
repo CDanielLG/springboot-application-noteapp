@@ -2,6 +2,7 @@ package com.ensolver.springboot.app.notes.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,6 +13,7 @@ import com.ensolver.springboot.app.notes.entity.User;
 import com.ensolver.springboot.app.notes.repositories.UserRepository;
 import com.ensolver.springboot.app.notes.service.RegistrationService;
 
+@CrossOrigin(origins = "https://noteensolvers.web.app") // Permitir CORS desde el origen específico
 @RestController
 @RequestMapping("/public")
 public class RegistrationController {
