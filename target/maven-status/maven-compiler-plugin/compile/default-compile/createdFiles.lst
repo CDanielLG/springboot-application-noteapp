@@ -10,5 +10,6 @@ com\ensolver\springboot\app\notes\service\RegistrationService.class
 com\ensolver\springboot\app\notes\repositories\UserRepository.class
 com\ensolver\springboot\app\notes\entity\User.class
 com\ensolver\springboot\app\notes\DTO\RegisterRequest.class
+com\ensolver\springboot\app\notes\security\JwtProperties.class
 com\ensolver\springboot\app\notes\controllers\NotesController.class
 com\ensolver\springboot\app\notes\security\JwtUtils.class

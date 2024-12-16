@@ -27,23 +27,23 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	
-	@Autowired
-	private JwtUtils jwtUtils;
-	
-	@Autowired
-	private CustomUserDetailsService userDetailsService;
+	 @Autowired
+	    private JwtUtils jwtUtils;
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
+	    @Autowired
+	    private CustomUserDetailsService userDetailsService;
 
-		  String header = request.getHeader("Authorization");
+	    @Override
+	    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+	            throws ServletException, IOException {
+
+	        String header = request.getHeader("Authorization");
 	        String token = null;
 	        String username = null;
 
 	        if (header != null && header.startsWith("Bearer ")) {
 	            token = header.substring(7);
-	            username = jwtUtils.getUsernameFromToken(token);
+	            username = jwtUtils.getClaimsFromToken(token).getSubject(); // Extrae el email o identificador
 	        }
 
 	        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -58,7 +58,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 	        }
 
 	        filterChain.doFilter(request, response);
+	    }
 	}
-	
-
-}

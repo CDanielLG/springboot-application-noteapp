@@ -1,46 +1,45 @@
 package com.ensolver.springboot.app.notes.security;
 
 
-import org.conscrypt.ct.DigitallySigned.SignatureAlgorithm;
+
 import org.springframework.stereotype.Component;
-
+import com.ensolver.springboot.app.notes.entity.User;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-
 import java.util.Date;
 
 
 @Component
 public class JwtUtils {
-	 private final String SECRET_KEY = "mySecretKey"; // Llave secreta para firmar el token
-	    private final long EXPIRATION_TIME = 86400000; // 1 día en milisegundos
 
-	    // Generar JWT
-	    public String generateToken(String username) {
+	    private final JwtProperties jwtProperties;
+
+	   
+	    public JwtUtils(JwtProperties jwtProperties) {
+	        this.jwtProperties = jwtProperties;
+	    }
+
+	    // Generar un token JWT
+	    public String generateToken(User user) {
 	        return Jwts.builder()
-	                .setSubject(username)
+	                .setSubject(user.getEmail())
 	                .setIssuedAt(new Date())
-	                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-	                .signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, SECRET_KEY)
+	                .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
+	                .signWith(io.jsonwebtoken.SignatureAlgorithm.HS512, jwtProperties.getSecret())
 	                .compact();
 	    }
 
-	    // Validar JWT
-	    public boolean validateToken(String token) {
-	        try {
-	            Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
-	            return true;
-	        } catch (Exception e) {
-	            System.out.println("Token inválido: " + e.getMessage());
-	            return false;
-	        }
+	    // Validar y obtener datos del token
+	    public Claims getClaimsFromToken(String token) {
+	        return Jwts.parser().setSigningKey(jwtProperties.getSecret()).parseClaimsJws(token).getBody();
 	    }
 
-	    // Obtener el username (email) del token
-	    public String getUsernameFromToken(String token) {
-	        return Jwts.parser()
-	                .setSigningKey(SECRET_KEY)
-	                .parseClaimsJws(token)
-	                .getBody()
-	                .getSubject();
+	    // Validar si el token ha expirado
+	    public boolean isTokenExpired(String token) {
+	        return getClaimsFromToken(token).getExpiration().before(new Date());
 	    }
-}
+	    public boolean validateToken(String token) {
+	        return !isTokenExpired(token); // Puedes agregar más validaciones aquí si es necesario.
+	    }
+	}
+

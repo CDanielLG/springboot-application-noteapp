@@ -8,6 +8,7 @@ C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\
 C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\app\notes\DTO\RegisterRequest.java
 C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\app\notes\repositories\NoteRepository.java
 C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\app\notes\service\RegistrationService.java
+C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\app\notes\security\JwtProperties.java
 C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\app\notes\SpringbootApplicationNoteappApplication.java
 C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\app\notes\service\NoteService.java
 C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\app\notes\security\JwtUtils.java
