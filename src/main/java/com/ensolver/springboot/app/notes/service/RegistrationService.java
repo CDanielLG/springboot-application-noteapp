@@ -34,6 +34,7 @@ public class RegistrationService {
 	        User user = new User();
 	        user.setEmail(registerRequest.getEmail());
 	        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+			user.setRoles("ROLE_USER");
 	        userRepository.save(user);
 
 	        // Generar token (asume que tienes un servicio para esto)
