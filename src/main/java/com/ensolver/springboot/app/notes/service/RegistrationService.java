@@ -1,5 +1,7 @@
 package com.ensolver.springboot.app.notes.service;
 
+import java.util.Collections;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,25 +24,31 @@ public class RegistrationService {
 	    private JwtUtils jwtUtils;
 
 	    // Método para registrar un usuario
-	    public String registerUserAndGenerateToken(RegisterRequest registerRequest) {
-	        if (userRepository.existsByEmail(registerRequest.getEmail())) {
-	            throw new IllegalArgumentException("El correo ya está en uso");
-	        }
-	        if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
-	            throw new IllegalArgumentException("Las contraseñas no coinciden");
-	        }
-
-	        // Registrar al usuario
-	        User user = new User();
-	        user.setEmail(registerRequest.getEmail());
-	        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-			user.setRoles("ROLE_USER");
-	        userRepository.save(user);
-
-	        // Generar token (asume que tienes un servicio para esto)
-	        String token = jwtUtils.generateToken(user); // Asegúrate de tener un `jwtService`
-	        return token;
-	    }
+		public String registerUserAndGenerateToken(RegisterRequest registerRequest) {
+			// Verificar si el correo ya está en uso
+			if (userRepository.existsByEmail(registerRequest.getEmail())) {
+				throw new IllegalArgumentException("El correo ya está en uso");
+			}
+		
+			// Verificar si las contraseñas coinciden
+			if (!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())) {
+				throw new IllegalArgumentException("Las contraseñas no coinciden");
+			}
+		
+			// Registrar al usuario
+			User user = new User();
+			user.setEmail(registerRequest.getEmail());
+			user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+		
+			// Asignar los roles como una lista
+			user.setRoles(Collections.singletonList("ROLE_USER"));  // Usamos Collections.singletonList para crear una lista de un solo rol
+		
+			userRepository.save(user);
+		
+			// Generar token (asegurándonos de que el token se genera correctamente con los roles)
+			String token = jwtUtils.generateToken(user); 
+			return token;
+		}
 
 	    // Método para manejar login
 	    public String loginUser(String email, String rawPassword) {

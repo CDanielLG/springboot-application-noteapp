@@ -1,6 +1,11 @@
 package com.ensolver.springboot.app.notes.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,18 +21,22 @@ public class CustomUserDetailsService implements UserDetailsService {
 	private UserRepository userRepository;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		  // Buscar el usuario por email (o nombre de usuario) en la base de datos
-        User user = userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el correo: " + username));
+public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    // Buscar el usuario por email (o nombre de usuario) en la base de datos
+    User user = userRepository.findByEmail(username)
+            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con el correo: " + username));
 
-        // Retornar el objeto UserDetails, utilizando el correo y la contraseña del usuario
-        return org.springframework.security.core.userdetails.User
-                .builder()
-                .username(user.getEmail())
-                .password(user.getPassword()) // Asegúrate de que la contraseña esté cifrada
-                .roles("USER") // Aquí podrías agregar roles de ser necesario
-                .build();
-	}
+    // Convertir roles a GrantedAuthority
+    List<GrantedAuthority> authorities = user.getRoles().stream()
+            .map(SimpleGrantedAuthority::new)
+            .collect(Collectors.toList());
+
+    // Retornar el objeto UserDetails
+    return new org.springframework.security.core.userdetails.User(
+            user.getEmail(),
+            user.getPassword(),
+            authorities
+    );
+}
 	
 }

@@ -41,5 +41,10 @@ public class JwtUtils {
 	    public boolean validateToken(String token) {
 	        return !isTokenExpired(token); // Puedes agregar más validaciones aquí si es necesario.
 	    }
+
+		public String extractEmail(String token) {
+			Claims claims = Jwts.parser().setSigningKey(jwtProperties.getSecret()).parseClaimsJws(token).getBody();
+			return claims.getSubject();
+		}
 	}
 

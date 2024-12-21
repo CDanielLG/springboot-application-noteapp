@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,15 +28,19 @@ import com.ensolver.springboot.app.notes.service.NoteService;
 @RequestMapping("/api/notes")
 public class NotesController {
 	
-	  @Autowired
+	    @Autowired
 	    private NoteService noteService;
 
+
+		private String getAuthenticatedUserEmail() {
+			return SecurityContextHolder.getContext().getAuthentication().getName();
+		}
 	    // Obtener todas las notas
-	    @GetMapping
-	    public ResponseEntity<List<Note>> getAllNotes() {
-	        List<Note> notes = noteService.getAllNotes();
-	        return new ResponseEntity<>(notes, HttpStatus.OK);
-	    }
+		public ResponseEntity<List<Note>> getAllNotes() {
+			String userEmail = getAuthenticatedUserEmail(); // Obtén el email del usuario autenticado
+			List<Note> notes = noteService.getNotesByUserEmail(userEmail); // Filtra las notas
+			return new ResponseEntity<>(notes, HttpStatus.OK);
+		}
 
 	    // Obtener notas archivadas o activas
 	    @GetMapping("/status/{archived}")
@@ -46,10 +51,13 @@ public class NotesController {
 
 	    // Crear una nueva nota
 	    @PostMapping
-	    public ResponseEntity<Note> createNote(@RequestBody Note note) {
-	        Note createdNote = noteService.createNote(note);
-	        return new ResponseEntity<>(createdNote, HttpStatus.CREATED);
-	    }
+	   public ResponseEntity<Note> createNote(@RequestBody Note note) {
+    // Obtener el correo del usuario autenticado
+    String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+    
+    Note createdNote = noteService.createNoteForUser(note, userEmail);
+    return new ResponseEntity<>(createdNote, HttpStatus.CREATED);
+}
 	    //Edit a note
 	    @PutMapping("/{id}")
 	    public ResponseEntity<Note> updateNote(@PathVariable Long id, @RequestBody Note note) {

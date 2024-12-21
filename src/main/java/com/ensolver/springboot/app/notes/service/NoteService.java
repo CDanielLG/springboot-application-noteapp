@@ -10,7 +10,9 @@ import java.util.concurrent.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ensolver.springboot.app.notes.entity.Note;
+import com.ensolver.springboot.app.notes.entity.User;
 import com.ensolver.springboot.app.notes.repositories.NoteRepository;
+import com.ensolver.springboot.app.notes.repositories.UserRepository;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteResult;
@@ -25,6 +27,8 @@ public class NoteService {
     @Autowired
     private NoteRepository noteRepository;
 
+    private UserRepository userRepository;
+
     public List<Note> getAllNotes() {
         return noteRepository.findAll();
     }
@@ -37,7 +41,11 @@ public class NoteService {
         return noteRepository.findById(id);
     }
 
-    public Note createNote(Note note) {
+    public Note createNoteForUser(Note note, String userEmail) {
+        User user = userRepository.findByEmail(userEmail)
+            .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+    
+        note.setUser(user); // Asigna el usuario a la nota
         return noteRepository.save(note);
     }
 
@@ -64,6 +72,10 @@ public class NoteService {
             }
         }
         return new ArrayList<>(categories);
+    }
+
+    public List<Note> getNotesByUserEmail(String email) {
+        return noteRepository.findByUser_Email(email); // Supone que existe esta consulta en el repositorio
     }
 	
 }

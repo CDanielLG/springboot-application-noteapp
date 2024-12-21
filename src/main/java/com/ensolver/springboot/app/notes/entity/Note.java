@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,6 +25,9 @@ public class Note {
     private String category;
     private boolean archived;
 
+      @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false) // Crea la columna para la clave foránea en la tabla de notas
+    private User user;
     // Getters y setters
     
     public Long getId() {
@@ -64,7 +69,13 @@ public class Note {
     public void setArchived(boolean archived) {
         this.archived = archived;
     }
-    
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
     
 
 }
