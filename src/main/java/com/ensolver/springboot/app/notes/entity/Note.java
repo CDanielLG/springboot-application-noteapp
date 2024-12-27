@@ -25,7 +25,7 @@ public class Note {
     private String category;
     private boolean archived;
 
-      @ManyToOne
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false) // Crea la columna para la clave foránea en la tabla de notas
     private User user;
     // Getters y setters

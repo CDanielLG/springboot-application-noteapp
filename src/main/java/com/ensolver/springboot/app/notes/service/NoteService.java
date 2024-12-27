@@ -5,19 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.ensolver.springboot.app.notes.entity.Note;
 import com.ensolver.springboot.app.notes.entity.User;
 import com.ensolver.springboot.app.notes.repositories.NoteRepository;
 import com.ensolver.springboot.app.notes.repositories.UserRepository;
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.WriteResult;
-import com.google.firebase.cloud.FirestoreClient;
-
 
 
 @Service
@@ -27,6 +21,7 @@ public class NoteService {
     @Autowired
     private NoteRepository noteRepository;
 
+    @Autowired
     private UserRepository userRepository;
 
     public List<Note> getAllNotes() {
@@ -37,6 +32,8 @@ public class NoteService {
         return noteRepository.findByArchived(archived);
     }
 
+   
+    @Transactional
     public Optional<Note> getNoteById(Long id) {
         return noteRepository.findById(id);
     }
@@ -77,5 +74,10 @@ public class NoteService {
     public List<Note> getNotesByUserEmail(String email) {
         return noteRepository.findByUser_Email(email); // Supone que existe esta consulta en el repositorio
     }
+
+	public boolean existsBySku(String value) {
+		
+		return false;
+	}
 	
 }

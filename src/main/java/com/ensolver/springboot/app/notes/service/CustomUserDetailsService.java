@@ -28,9 +28,9 @@ public UserDetails loadUserByUsername(String username) throws UsernameNotFoundEx
 
     // Convertir roles a GrantedAuthority
     List<GrantedAuthority> authorities = user.getRoles().stream()
-            .map(SimpleGrantedAuthority::new)
-            .collect(Collectors.toList());
-
+            .map(role -> new SimpleGrantedAuthority(role.getName()))
+                    .collect(Collectors.toList());
+    
     // Retornar el objeto UserDetails
     return new org.springframework.security.core.userdetails.User(
             user.getEmail(),

@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -36,6 +37,8 @@ public class NotesController {
 			return SecurityContextHolder.getContext().getAuthentication().getName();
 		}
 	    // Obtener todas las notas
+	    @GetMapping
+	    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 		public ResponseEntity<List<Note>> getAllNotes() {
 			String userEmail = getAuthenticatedUserEmail(); // Obtén el email del usuario autenticado
 			List<Note> notes = noteService.getNotesByUserEmail(userEmail); // Filtra las notas

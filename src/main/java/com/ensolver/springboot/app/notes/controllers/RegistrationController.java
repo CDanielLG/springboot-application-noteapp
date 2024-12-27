@@ -1,9 +1,13 @@
 package com.ensolver.springboot.app.notes.controllers;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +19,8 @@ import com.ensolver.springboot.app.notes.entity.User;
 import com.ensolver.springboot.app.notes.repositories.UserRepository;
 import com.ensolver.springboot.app.notes.service.RegistrationService;
 
+import jakarta.validation.Valid;
+
 @CrossOrigin(origins = "https://noteensolvers.web.app") // Permitir CORS desde el origen específico
 @RestController
 @RequestMapping("/public")
@@ -24,28 +30,29 @@ public class RegistrationController {
     @Autowired
     private RegistrationService registrationService;
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping
+    public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result) {
+        if (result.hasFieldErrors()) {
+            return validation(result);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(registrationService.save(user));
+    }
+    
     // Endpoint para registrar usuarios
     @PostMapping("/register")
-    public ResponseEntity<Map<String, String>> registerUser(@RequestBody RegisterRequest registerRequest) {
-        try {
-            String token = registrationService.registerUserAndGenerateToken(registerRequest); // Registrar y generar token
-            Map<String, String> response = Map.of("message", "Usuario registrado con éxito", "token", token);
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            Map<String, String> errorResponse = Map.of("message", e.getMessage());
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
+    public ResponseEntity<?> register(@Valid @RequestBody User user, BindingResult result) {
+        user.setAdmin(false);
+        return create(user, result);
     }
 
-    // Endpoint para login (puedes decidir manejarlo con Spring Security)
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> loginUser(@RequestBody RegisterRequest loginRequest) {
-        try {
-            String token = registrationService.loginUser(loginRequest.getEmail(), loginRequest.getPassword());
-            return ResponseEntity.ok(Map.of("token", token)); // Devuelve un JSON con el token
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(401).body(Map.of("message", e.getMessage())); // Maneja errores
-        }
+    private ResponseEntity<?> validation(BindingResult result) {
+        Map<String, String> errors = new HashMap<>();
+
+        result.getFieldErrors().forEach(err -> {
+            errors.put(err.getField(), "El campo " + err.getField() + " " + err.getDefaultMessage());
+        });
+        return ResponseEntity.badRequest().body(errors);
     }
 
 }
