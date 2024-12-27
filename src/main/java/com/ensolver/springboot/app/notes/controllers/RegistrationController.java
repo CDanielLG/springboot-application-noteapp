@@ -30,7 +30,7 @@ public class RegistrationController {
     @Autowired
     private RegistrationService registrationService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result) {
         if (result.hasFieldErrors()) {

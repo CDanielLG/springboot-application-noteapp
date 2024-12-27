@@ -21,6 +21,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -32,6 +33,7 @@ public class User {
 	private Long id;
 
 	@Column(nullable = false, unique = true)
+	@Email
 	private String email;
 
 	@NotBlank
