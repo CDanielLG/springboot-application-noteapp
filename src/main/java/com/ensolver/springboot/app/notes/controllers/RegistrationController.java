@@ -31,7 +31,7 @@ public class RegistrationController {
     private RegistrationService registrationService;
 
 
-    @PostMapping
+    @PostMapping("/login")
     public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result) {
         if (result.hasFieldErrors()) {
             return validation(result);
