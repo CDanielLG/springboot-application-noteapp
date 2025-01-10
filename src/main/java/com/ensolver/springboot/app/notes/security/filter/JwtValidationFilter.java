@@ -39,7 +39,13 @@ public class JwtValidationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+                String path = request.getServletPath();
 
+                // Excluir rutas públicas
+                if (path.equals("/public/register") || path.equals("/public/login")) {
+                    chain.doFilter(request, response);
+                    return;
+                }
         String header = request.getHeader(HEADER_AUTHORIZATION);
 
         if (header == null || !header.startsWith(PREFIX_TOKEN)) {
