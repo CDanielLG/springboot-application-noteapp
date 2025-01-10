@@ -146,4 +146,10 @@ public class User {
 		return true;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	
+
 }

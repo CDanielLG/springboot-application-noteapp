@@ -58,4 +58,9 @@ public class RegistrationService {
 	    public boolean existsByUsername(String username) {
 	        return userRepository.existsByEmail(username);
 	    }
+
+		public User findByEmail(String email) {
+			return userRepository.findByEmail(email)
+					.orElse(null); // Asegúrate de manejar el Optional correctamente.
+		}
 }
