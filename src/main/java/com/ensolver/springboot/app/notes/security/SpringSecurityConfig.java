@@ -47,12 +47,16 @@ public class SpringSecurityConfig {
         return httpSecurity
         .formLogin(httpForm -> {
             httpForm
-            .loginPage("/public/login").permitAll();
+                .loginPage("/public/login")  // Página de login personalizada
+                .permitAll();  // Permitir acceso a la página de login
         })
         .authorizeHttpRequests(registry -> {
-            registry.requestMatchers("/public/register", "/public/login", "/css/**", "/js/**").permitAll(); // Agrega login aquí
+            // Permitir acceso a las rutas públicas (login, register, recursos estáticos)
+            registry.requestMatchers("/public/register", "/public/login", "/css/**", "/js/**").permitAll();
+            // Requiere autenticación para todas las demás rutas
             registry.anyRequest().authenticated();
         })
+        .csrf().disable()  // Deshabilitar CSRF si estás usando APIs REST
         .build();
     }
     
