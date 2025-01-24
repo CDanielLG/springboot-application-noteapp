@@ -7,9 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ensolver.springboot.app.notes.DTO.RegisterRequest;
 import com.ensolver.springboot.app.notes.entity.User;
-
+import com.ensolver.springboot.app.notes.security.SpringSecurityConfig;
 import com.ensolver.springboot.app.notes.service.RegistrationService;
 
 import jakarta.validation.Valid;
@@ -29,8 +30,8 @@ public class RegistrationController {
 
 
    
-    
-    private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private RegistrationService registrationService;
@@ -43,7 +44,7 @@ public class RegistrationController {
         });
         return ResponseEntity.badRequest().body(errors);
     }
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody RegisterRequest loginRequest, BindingResult result) {
         if (result.hasFieldErrors()) {
             return validation(result);
@@ -63,7 +64,7 @@ public class RegistrationController {
     }
     
     // Endpoint para registrar usuarios
-    @GetMapping("/register")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody User user, BindingResult result) {
         if (result.hasFieldErrors()) {
             return validation(result);

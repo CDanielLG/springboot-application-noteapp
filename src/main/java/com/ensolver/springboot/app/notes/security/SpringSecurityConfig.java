@@ -33,12 +33,12 @@ public class SpringSecurityConfig {
     private AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
-    AuthenticationManager authenticationManager() throws Exception {
+    public AuthenticationManager authenticationManager() throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public  BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
