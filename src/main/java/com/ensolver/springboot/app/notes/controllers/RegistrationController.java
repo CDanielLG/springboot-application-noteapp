@@ -28,8 +28,6 @@ import jakarta.validation.Valid;
 @RequestMapping("/public")
 public class RegistrationController {
 
-
-   
     @Autowired
     private PasswordEncoder passwordEncoder;
 
