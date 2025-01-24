@@ -50,7 +50,7 @@ public class SpringSecurityConfig {
             .loginPage("/public/login").permitAll();
         })
         .authorizeHttpRequests(registry -> {
-            registry.requestMatchers("/public/register").permitAll();
+            registry.requestMatchers("/public/register","/css/**","/js/**").permitAll();
             registry.anyRequest().authenticated();
         })
         .build();
