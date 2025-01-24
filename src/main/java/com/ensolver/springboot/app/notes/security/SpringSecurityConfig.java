@@ -45,11 +45,14 @@ public class SpringSecurityConfig {
    @Bean
    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-        .authorizeHttpRequests(registry -> {
-            registry.requestMatchers("/public/login", "/public/register", "/css/**", "/js/**").permitAll(); // Permite acceso a los endpoints públicos
-            registry.anyRequest().authenticated(); // Requiere autenticación para el resto
+        .formLogin(httpForm -> {
+            httpForm
+            .loginPage("/public/login").permitAll();
         })
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Configura sin estado
+        .authorizeHttpRequests(registry -> {
+            registry.requestMatchers("/public/register", "/public/login", "/css/**", "/js/**").permitAll(); // Agrega login aquí
+            registry.anyRequest().authenticated();
+        })
         .build();
     }
     
