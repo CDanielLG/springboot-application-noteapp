@@ -10,9 +10,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -24,7 +26,7 @@ import com.ensolver.springboot.app.notes.security.filter.*;
 import java.util.Arrays;
 
 @Configuration
-@EnableMethodSecurity(prePostEnabled=true)
+@EnableWebSecurity
 public class SpringSecurityConfig {
     
     @Autowired
@@ -40,25 +42,18 @@ public class SpringSecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests((authz) -> authz
-                .requestMatchers(HttpMethod.GET, "/public/register").permitAll()
-                .requestMatchers(HttpMethod.GET, "/public/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/public/register").permitAll()
-                .requestMatchers(HttpMethod.POST, "/public/login").permitAll()
-                // .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN")
-                // .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/{id}").hasAnyRole("ADMIN", "USER")
-                // .requestMatchers(HttpMethod.POST, "/api/products").hasRole("ADMIN")
-                // .requestMatchers(HttpMethod.PUT, "/api/products/{id}").hasRole("ADMIN")
-                // .requestMatchers(HttpMethod.DELETE, "/api/products/{id}").hasRole("ADMIN")
-                .anyRequest().authenticated())
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                .addFilter(new JwtValidationFilter(authenticationManager()))
-                .csrf(config -> config.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .build();
+   @Bean
+   public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+        return httpSecurity
+        .formLogin(httpForm -> {
+            httpForm
+            .loginPage("/public/login").permitAll();
+        })
+        .authorizeHttpRequests(registry -> {
+            registry.requestMatchers("/public/register").permitAll();
+            registry.anyRequest().authenticated();
+        })
+        .build();
     }
     
     @Bean
