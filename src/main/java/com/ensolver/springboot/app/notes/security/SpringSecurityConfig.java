@@ -45,18 +45,14 @@ public class SpringSecurityConfig {
    @Bean
    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-        .formLogin(httpForm -> {
-            httpForm
-                .loginPage("/public/login")  // Página de login personalizada
-                .permitAll();  // Permitir acceso a la página de login
-        })
-        .authorizeHttpRequests(registry -> {
-            // Permitir acceso a las rutas públicas (login, register, recursos estáticos)
+        .authorizeHttpRequests(registry ->{
+        	   // Permitir acceso a las rutas públicas (login, register, recursos estáticos)
             registry.requestMatchers("/public/register", "/public/login", "/css/**", "/js/**").permitAll();
             // Requiere autenticación para todas las demás rutas
             registry.anyRequest().authenticated();
         })
         .csrf().disable()  // Deshabilitar CSRF si estás usando APIs REST
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Sin estado (para APIs REST)
         .build();
     }
     
