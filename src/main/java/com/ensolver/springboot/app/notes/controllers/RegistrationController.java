@@ -1,6 +1,7 @@
 package com.ensolver.springboot.app.notes.controllers;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -46,17 +47,22 @@ public class RegistrationController {
     }
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody RegisterRequest loginRequest, BindingResult result) {
+        // Validar errores de validación
         if (result.hasFieldErrors()) {
             return validation(result);
         }
     
-      User user = registrationService.findByEmail(loginRequest.getEmail())
-    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas"));
-        if (user == null || !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas.");
+        // Buscar el usuario por email
+        Optional<User> optionalUser = registrationService.findByEmail(loginRequest.getEmail());
+    
+        // Verificar si el usuario existe y si la contraseña coincide
+        if (!optionalUser.isPresent() || !passwordEncoder.matches(loginRequest.getPassword(), optionalUser.get().getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", "Credenciales incorrectas")); // Devuelve un JSON
         }
     
-        // Generar un token o simplemente indicar éxito
+        // Si las credenciales son correctas, generar una respuesta exitosa
+        User user = optionalUser.get();
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Inicio de sesión exitoso.");
         response.put("user", user); // Evita devolver contraseñas u otra información sensible.
