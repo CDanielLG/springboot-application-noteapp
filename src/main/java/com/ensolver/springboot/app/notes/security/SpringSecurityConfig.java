@@ -46,7 +46,7 @@ public class SpringSecurityConfig {
    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
         .authorizeHttpRequests(registry ->{
-        	   // Permitir acceso a las rutas públicas (login, register, recursos estáticos)
+        	   // Permitir acceso a las rutas públicas (login, register, recursdeos estáticos)
             registry.requestMatchers("/public/register", "/public/login", "/css/**", "/js/**").permitAll();
             // Requiere autenticación para todas las demás rutas
             registry.anyRequest().authenticated();

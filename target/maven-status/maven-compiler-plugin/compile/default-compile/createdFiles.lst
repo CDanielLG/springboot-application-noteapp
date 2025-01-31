@@ -10,6 +10,7 @@ com\ensolver\springboot\app\notes\SpringbootApplicationNoteappApplication.class
 com\ensolver\springboot\app\notes\service\CustomUserDetailsService.class
 com\ensolver\springboot\app\notes\entity\User.class
 com\ensolver\springboot\app\notes\DTO\RegisterRequest.class
+com\ensolver\springboot\app\notes\exceptions\RegistrationException.class
 com\ensolver\springboot\app\notes\ProductValidation.class
 com\ensolver\springboot\app\notes\repositories\NoteRepository.class
 com\ensolver\springboot\app\notes\entity\Note.class

@@ -37,8 +37,14 @@ public class NoteService {
     public Optional<Note> getNoteById(Long id) {
         return noteRepository.findById(id);
     }
-
+    @Transactional
     public Note createNoteForUser(Note note, String userEmail) {
+        if (note.getTitle() == null || note.getTitle().isEmpty()) {
+            throw new IllegalArgumentException("El título de la nota no puede estar vacío");
+        }
+        if (note.getContent() == null || note.getContent().isEmpty()) {
+            throw new IllegalArgumentException("El contenido de la nota no puede estar vacío");
+        }
         User user = userRepository.findByEmail(userEmail)
             .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
     

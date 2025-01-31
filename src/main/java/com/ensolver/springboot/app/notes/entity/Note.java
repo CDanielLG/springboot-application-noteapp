@@ -2,6 +2,8 @@ package com.ensolver.springboot.app.notes.entity;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,8 +16,6 @@ import jakarta.persistence.Table;
 @Table(name="notes")
 public class Note {
 	
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,7 +27,21 @@ public class Note {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false) // Crea la columna para la clave foránea en la tabla de notas
+    @JsonIgnore
     private User user;
+    
+ // Constructor sin argumentos (requerido por JPA)
+    public Note() {
+    }
+
+    // Constructor con argumentos (opcional, útil para testing)
+    public Note(String title, String content, String category, boolean archived, User user) {
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.archived = archived;
+        this.user = user;
+    }
     // Getters y setters
     
     public Long getId() {

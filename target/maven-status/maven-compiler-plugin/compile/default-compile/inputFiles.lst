@@ -1,4 +1,5 @@
 C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\app\notes\validation\ExistsByUsernameValidation.java
+C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\app\notes\exceptions\RegistrationException.java
 C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\app\notes\validation\RequiredValidation.java
 C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\app\notes\entity\Note.java
 C:\spring5\springboot-application-noteapp\src\main\java\com\ensolver\springboot\app\notes\security\filter\JwtAuthenticationFilter.java

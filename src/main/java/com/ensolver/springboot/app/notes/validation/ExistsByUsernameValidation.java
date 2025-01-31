@@ -19,7 +19,7 @@ public class ExistsByUsernameValidation implements ConstraintValidator<ExistsByU
         if (service == null) {
             return true;
         }
-        return !service.existsByUsername(email);
+        return  !service.existsByEmail(email);
     }
     
     

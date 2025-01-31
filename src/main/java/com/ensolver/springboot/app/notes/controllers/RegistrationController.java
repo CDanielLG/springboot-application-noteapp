@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ensolver.springboot.app.notes.DTO.RegisterRequest;
 import com.ensolver.springboot.app.notes.entity.User;
+import com.ensolver.springboot.app.notes.exceptions.RegistrationException;
 import com.ensolver.springboot.app.notes.security.SpringSecurityConfig;
 import com.ensolver.springboot.app.notes.service.RegistrationService;
 
@@ -48,7 +50,8 @@ public class RegistrationController {
             return validation(result);
         }
     
-        User user = registrationService.findByEmail(loginRequest.getEmail());
+      User user = registrationService.findByEmail(loginRequest.getEmail())
+    .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciales incorrectas"));
         if (user == null || !passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas.");
         }
@@ -63,35 +66,18 @@ public class RegistrationController {
     
     // Endpoint para registrar usuarios
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody User user, BindingResult result) {
-        if (result.hasFieldErrors()) {
-            return validation(result);
+    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest registerRequest) {
+        try {
+            User user = new User();
+            user.setEmail(registerRequest.getEmail());
+            user.setPassword(registerRequest.getPassword());
+            user.setAdmin(false); // Por defecto, no es admin
+
+            User registeredUser = registrationService.save(user);
+            return ResponseEntity.ok(registeredUser);
+        } catch (RegistrationException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
-    
-        // Verificar si el email ya está en uso
-        if (registrationService.findByEmail(user.getEmail()) != null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "El correo electrónico ya está registrado."));
-        }
-    
-        // Codificar la contraseña
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-    
-        // Configurar el rol predeterminado
-        user.setAdmin(false);
-    
-        // Guardar el usuario
-        User savedUser = registrationService.save(user);
-    
-        // Preparar la respuesta (sin incluir información sensible como la contraseña)
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Usuario registrado exitosamente.");
-        response.put("user", Map.of(
-            "id", savedUser.getId(),
-            "email", savedUser.getEmail(),
-            "admin", savedUser.isAdmin()
-        ));
-    
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 }
