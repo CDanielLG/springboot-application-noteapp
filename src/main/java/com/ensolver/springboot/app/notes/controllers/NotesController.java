@@ -43,6 +43,7 @@ public ResponseEntity<String> testAuth() {
 		}
 	    // Obtener todas las notas
 	    @GetMapping
+		@PreAuthorize("1")
 		public ResponseEntity<List<Note>> getAllNotes() {
 			String userEmail = getAuthenticatedUserEmail(); // Obtén el email del usuario autenticado
 			List<Note> notes = noteService.getNotesByUserEmail(userEmail); // Filtra las notas
