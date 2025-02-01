@@ -66,7 +66,7 @@ public class RegistrationController {
         // Verificar si el usuario existe y si la contraseña coincide
         if (!optionalUser.isPresent() || !passwordEncoder.matches(loginRequest.getPassword(), optionalUser.get().getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("message", "Credenciales incorrectas")); // Devuelve un JSON
+                .body(Map.of("message", "La contraseña o el correo electronico son incorrectos, porfavor intente de nuevo")); // Devuelve un JSON
         }
     
         // Si las credenciales son correctas, generar un token
