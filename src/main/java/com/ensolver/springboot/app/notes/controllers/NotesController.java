@@ -38,7 +38,6 @@ public class NotesController {
 		}
 	    // Obtener todas las notas
 	    @GetMapping
-	    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 		public ResponseEntity<List<Note>> getAllNotes() {
 			String userEmail = getAuthenticatedUserEmail(); // Obtén el email del usuario autenticado
 			List<Note> notes = noteService.getNotesByUserEmail(userEmail); // Filtra las notas

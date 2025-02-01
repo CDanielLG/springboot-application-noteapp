@@ -8,27 +8,26 @@ import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 
+import io.jsonwebtoken.security.Keys;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import com.ensolver.springboot.app.notes.DTO.RegisterRequest;
-import com.ensolver.springboot.app.notes.entity.Role;
+
 import com.ensolver.springboot.app.notes.entity.User;
 import com.ensolver.springboot.app.notes.exceptions.RegistrationException;
-import com.ensolver.springboot.app.notes.security.SpringSecurityConfig;
+
 import com.ensolver.springboot.app.notes.service.RegistrationService;
 
 import io.jsonwebtoken.Jwts;
@@ -84,7 +83,7 @@ public class RegistrationController {
         try {
             User user = new User();
             user.setEmail(registerRequest.getEmail());
-            user.setPassword(registerRequest.getPassword());
+            user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
             user.setAdmin(false); // Por defecto, no es admin
 
             User registeredUser = registrationService.save(user);
