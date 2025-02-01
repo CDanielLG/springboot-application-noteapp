@@ -33,6 +33,11 @@ public class NotesController {
 	    private NoteService noteService;
 
 
+		@GetMapping("/api/notes/test")
+public ResponseEntity<String> testAuth() {
+    String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+    return ResponseEntity.ok("Usuario autenticado: " + userEmail);
+}
 		private String getAuthenticatedUserEmail() {
 			return SecurityContextHolder.getContext().getAuthentication().getName();
 		}
