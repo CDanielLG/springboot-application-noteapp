@@ -43,7 +43,7 @@ public ResponseEntity<String> testAuth() {
 		}
 	    // Obtener todas las notas
 	    @GetMapping
-		@PreAuthorize("1")
+		@PreAuthorize("hasAnyRole('1')") 
 		public ResponseEntity<List<Note>> getAllNotes() {
 			String userEmail = getAuthenticatedUserEmail(); // Obtén el email del usuario autenticado
 			List<Note> notes = noteService.getNotesByUserEmail(userEmail); // Filtra las notas
@@ -58,14 +58,13 @@ public ResponseEntity<String> testAuth() {
 	    }
 
 	    // Crear una nueva nota
-	    @PostMapping
-	   public ResponseEntity<Note> createNote(@RequestBody Note note) {
-    // Obtener el correo del usuario autenticado
-    String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-    
-    Note createdNote = noteService.createNoteForUser(note, userEmail);
-    return new ResponseEntity<>(createdNote, HttpStatus.CREATED);
-}
+		@PostMapping
+		@PreAuthorize("hasAnyRole('1')") // Solo usuarios con rol USER o ADMIN pueden crear notas
+		public ResponseEntity<Note> createNote(@RequestBody Note note) {
+			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+			Note createdNote = noteService.createNoteForUser(note, userEmail);
+			return ResponseEntity.status(HttpStatus.CREATED).body(createdNote);
+		}
 	    //Edit a note
 	    @PutMapping("/{id}")
 	    public ResponseEntity<Note> updateNote(@PathVariable Long id, @RequestBody Note note) {
