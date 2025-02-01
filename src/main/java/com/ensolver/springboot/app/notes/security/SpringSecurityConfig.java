@@ -48,6 +48,7 @@ public class SpringSecurityConfig {
         .authorizeHttpRequests(registry ->{
         	   // Permitir acceso a las rutas públicas (login, register, recursdeos estáticos)
             registry.requestMatchers("/public/register", "/public/login", "/css/**", "/js/**").permitAll();
+            registry.requestMatchers(HttpMethod.GET, "/api/notes/**").permitAll();
             // Requiere autenticación para todas las demás rutas
             registry.anyRequest().authenticated();
         })
@@ -60,7 +61,6 @@ public class SpringSecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.addAllowedOrigin("https://noteensolvers.web.app");
-        config.setAllowedOriginPatterns(Arrays.asList("*"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
