@@ -49,6 +49,8 @@ public class SpringSecurityConfig {
         	   // Permitir acceso a las rutas públicas (login, register, recursdeos estáticos)
             registry.requestMatchers("/public/register", "/public/login", "/css/**", "/js/**").permitAll();
             registry.requestMatchers(HttpMethod.GET, "/api/notes/**").permitAll();
+            registry.requestMatchers(HttpMethod.POST, "/api/notes/**").permitAll();
+            
             // Requiere autenticación para todas las demás rutas
             registry.anyRequest().authenticated();
         })
