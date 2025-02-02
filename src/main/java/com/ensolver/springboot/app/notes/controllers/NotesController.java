@@ -59,7 +59,7 @@ public ResponseEntity<String> testAuth() {
 
 	    // Crear una nueva nota
 		@PostMapping
-		@PreAuthorize("hasAnyRole('1')") // Solo usuarios con rol USER o ADMIN pueden crear notas
+		@PreAuthorize("hasAnyRole(1)") // Solo usuarios con rol USER o ADMIN pueden crear notas
 		public ResponseEntity<Note> createNote(@RequestBody Note note) {
 			String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 			Note createdNote = noteService.createNoteForUser(note, userEmail);
