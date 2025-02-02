@@ -68,7 +68,8 @@ public class SpringSecurityConfig {
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
  // Habilitar el encabezado 'Access-Control-Allow-Origin' en la respuesta
- config.addExposedHeader("Access-Control-Allow-Origin");
+ config.addExposedHeader("Authorization"); // Si usas tokens JWT
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
