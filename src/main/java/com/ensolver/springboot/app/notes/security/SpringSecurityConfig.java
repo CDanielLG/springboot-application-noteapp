@@ -45,6 +45,7 @@ public class SpringSecurityConfig {
    @Bean
    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests(registry ->{
         	   // Permitir acceso a las rutas públicas (login, register, recursdeos estáticos)
             registry.requestMatchers("/public/register", "/public/login", "/css/**", "/js/**").permitAll();
