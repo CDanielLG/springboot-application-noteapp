@@ -66,7 +66,8 @@ public class SpringSecurityConfig {
         config.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PUT","PATCH"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
-
+ // Habilitar el encabezado 'Access-Control-Allow-Origin' en la respuesta
+ config.addExposedHeader("Access-Control-Allow-Origin");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
