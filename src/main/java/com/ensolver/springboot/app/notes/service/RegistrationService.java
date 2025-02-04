@@ -31,44 +31,43 @@ public class RegistrationService {
 	    
 	    @Autowired
 	    private RoleRepository roleRepository;
-	    
-	    @Transactional(readOnly = true)
-	    public List<User> findAll() {
-	        return (List<User>) userRepository.findAll();
-	    }
-	    
+	      
 
 		@Transactional
 		public User save(User user) {
-			// Validar que el correo no esté vacío
-			if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
-				throw new RegistrationException("El correo no puede estar vacío");
-			}
-	
-			// Validar que la contraseña no esté vacía
-			if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
-				throw new RegistrationException("La contraseña no puede estar vacía");
-			}
-	
-			// Verificar si el correo ya está registrado
-			if (userRepository.existsByEmail(user.getEmail())) {
-				throw new RegistrationException("El correo ya está registrado");
-			}
-	
-			// Asignar roles
-			Optional<Role> optionalRoleUser = roleRepository.findByName("ROLE_USER");
-			List<Role> roles = new ArrayList<>();
-	
-			optionalRoleUser.ifPresent(roles::add);
-	
-			if (user.isAdmin()) {
-				Optional<Role> optionalRoleAdmin = roleRepository.findByName("ROLE_ADMIN");
-				optionalRoleAdmin.ifPresent(roles::add);
-			}
-	
-			user.setRoles(roles);
-			user.setPassword(passwordEncoder.encode(user.getPassword())); // Encriptar la contraseña
-			return userRepository.save(user);
+		 // Validar campos obligatorios
+		 if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            throw new RegistrationException("El correo no puede estar vacío");
+        }
+
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            throw new RegistrationException("La contraseña no puede estar vacía");
+        }
+
+        // Verificar si el correo ya existe
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RegistrationException("El correo ya está registrado");
+        }
+
+        // Asignar roles
+        List<Role> roles = new ArrayList<>();
+
+        // Rol USER por defecto (obligatorio)
+        Role userRole = roleRepository.findByName("USER")
+                .orElseThrow(() -> new RegistrationException("Rol USER no encontrado"));
+        roles.add(userRole);
+
+        // Rol ADMIN (si está configurado)
+        if (user.isAdmin()) { // Asegúrate de que isAdmin() esté correctamente implementado
+            Role adminRole = roleRepository.findByName("ADMIN")
+                    .orElseThrow(() -> new RegistrationException("Rol ADMIN no encontrado"));
+            roles.add(adminRole);
+        }
+
+        user.setRoles(roles);
+        user.setPassword(passwordEncoder.encode(user.getPassword())); // Encriptar contraseña
+
+        return userRepository.save(user);
 		}
 	
 		@Transactional(readOnly = true)
