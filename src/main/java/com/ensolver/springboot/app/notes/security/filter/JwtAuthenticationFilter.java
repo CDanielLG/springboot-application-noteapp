@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.crypto.SecretKey;
+
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,7 +22,7 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.jsonwebtoken.Claims;
+
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -31,10 +33,12 @@ import static com.ensolver.springboot.app.notes.security.JwtTokenConfig.*;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final SecretKey secretKey;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, SecretKey secretKey) {
         this.authenticationManager = authenticationManager;
+        this.secretKey = secretKey;
     }
 
     @Override
@@ -71,18 +75,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String username = user.getUsername();
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
 
-        Claims claims = Jwts.claims()
-                .add("authorities", new ObjectMapper().writeValueAsString(roles))
-                .add("username", username)
-        .build();
-
-
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("authorities", roles.stream().map(GrantedAuthority::getAuthority).toList());
+        claims.put("username", username);
+        
         String token = Jwts.builder()
                 .subject(username)
-                .claims(claims)
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
+                .claims(claims)  // Ahora usa un Map
+                .expiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hora
                 .issuedAt(new Date())
-                .signWith(SECRET_KEY)
+                .signWith(secretKey, Jwts.SIG.HS256) // Usa Jwts.SIG.HS256 en lugar de SignatureAlgorithm
                 .compact();
 
         response.addHeader(HEADER_AUTHORIZATION, PREFIX_TOKEN + token);
