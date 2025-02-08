@@ -45,7 +45,7 @@ public class NoteService {
         if (note.getContent() == null || note.getContent().isEmpty()) {
             throw new IllegalArgumentException("El contenido de la nota no puede estar vacío");
         }
-        User user = userRepository.findByEmail(userEmail)
+        User user = userRepository.findByUsername(userEmail)
             .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
     
         note.setUser(user); // Asigna el usuario a la nota
@@ -77,8 +77,8 @@ public class NoteService {
         return new ArrayList<>(categories);
     }
 
-    public List<Note> getNotesByUserEmail(String email) {
-        return noteRepository.findByUser_Email(email); // Supone que existe esta consulta en el repositorio
+    public List<Note> getNotesByUserEmail(String username) {
+        return noteRepository.findByUser_Username(username); // Supone que existe esta consulta en el repositorio
     }
 
 	public boolean existsBySku(String value) {

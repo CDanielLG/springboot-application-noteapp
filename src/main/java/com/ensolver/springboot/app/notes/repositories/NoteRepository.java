@@ -12,10 +12,9 @@ public interface NoteRepository extends JpaRepository<Note, Long>{
 	
     List<Note> findByArchived(boolean archived);
     // Encuentra notas por el email del usuario
-    List<Note> findByUserEmail(String email);
+    List<Note> findByUser_Username(String username);
 
-    // Encuentra notas por el ID del usuario
-    List<Note> findByUserId(Long userId);
 
-    List<Note> findByUser_Email(String email);
+
+
 }
