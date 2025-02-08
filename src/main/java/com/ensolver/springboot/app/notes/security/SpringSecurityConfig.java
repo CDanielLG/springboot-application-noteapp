@@ -31,7 +31,7 @@ public class SpringSecurityConfig {
                 .disable())
             .authorizeHttpRequests(authRequest ->
               authRequest
-                .requestMatchers("/auth/**").permitAll()
+                .requestMatchers("/public/**").permitAll()
                 .anyRequest().authenticated()
                 )
             .sessionManagement(sessionManager->
