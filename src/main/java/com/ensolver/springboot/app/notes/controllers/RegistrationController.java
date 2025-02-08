@@ -19,21 +19,21 @@ import com.ensolver.springboot.app.notes.service.RegistrationService;
 
 import lombok.RequiredArgsConstructor;
 
-@CrossOrigin(origins = "https://noteensolvers.web.app") // Permitir CORS desde el origen específico
+@CrossOrigin(origins = "*") // Permitir CORS desde el origen específico
 @RestController
 @RequestMapping("/public")
 @RequiredArgsConstructor
 public class RegistrationController {
-     @Autowired
+    
     private final RegistrationService authService;
     
-    @PostMapping(value = "login")
+    @PostMapping(value = "/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request)
     {
         return ResponseEntity.ok(authService.login(request));
     }
 
-    @PostMapping(value = "register")
+    @PostMapping(value = "/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request)
     {
         return ResponseEntity.ok(authService.register(request));
