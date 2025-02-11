@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,35 +29,48 @@ public class SpringSecurityConfig {
 
     private final AuthenticationProvider authProvider;
 
-@Bean
-public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    return http
-        .csrf(csrf -> csrf.disable())
-        .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Añade esto
-        .authorizeHttpRequests(authRequest ->
-            authRequest
-                .requestMatchers("/public/**").permitAll()
-                .anyRequest().authenticated()
-        )
-        .sessionManagement(sessionManager -> 
-            sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        .authenticationProvider(authProvider)
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-        .build();
-}
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+            .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests(authRequest ->
+                authRequest
+                    .requestMatchers("/public/**").permitAll()
+                    .anyRequest().authenticated()
+            )
+            .sessionManagement(sessionManager -> 
+                sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authenticationProvider(authProvider)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .exceptionHandling(exceptionHandling -> 
+                exceptionHandling
+                    .authenticationEntryPoint((request, response, authException) -> {
+                        response.setContentType("application/json");
+                        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                        response.getWriter().write("{ \"error\": \"Token inválido o faltante\" }");
+                    })
+                    .accessDeniedHandler((request, response, accessDeniedException) -> {
+                        response.setContentType("application/json");
+                        response.setStatus(HttpStatus.FORBIDDEN.value());
+                        response.getWriter().write("{ \"error\": \"No tienes permisos\" }");
+                    })
+            )
+            .build();
+    }
 
-// Configuración CORS
-@Bean
-public CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration config = new CorsConfiguration();
-    config.setAllowedOrigins(List.of("https://noteensolvers.web.app")); // Reemplaza con tu dominio
-    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE","PATCH"));
-    config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-    config.setExposedHeaders(List.of("Authorization"));
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("https://tudominio-frontend.com")); // Reemplaza con tu URL
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        config.setExposedHeaders(List.of("Authorization"));
+        config.setAllowCredentials(true);
 
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", config);
-    return source;
-}
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 }
 
