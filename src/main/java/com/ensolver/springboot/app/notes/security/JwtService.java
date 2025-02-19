@@ -24,13 +24,11 @@ public class JwtService {
     }
 
     private String getToken(Map<String,Object> extraClaims, UserDetails user) {
-        return Jwts
-            .builder()
-            .setClaims(extraClaims)
+        return Jwts.builder()
             .setSubject(user.getUsername())
-            .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis()+1000*60*24))
-            .signWith(getKey(), SignatureAlgorithm.HS256)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas
+            .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
             .compact();
     }
 
