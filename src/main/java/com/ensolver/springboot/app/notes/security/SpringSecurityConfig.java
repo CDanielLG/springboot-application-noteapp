@@ -34,12 +34,13 @@ public class SpringSecurityConfig {
         return http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests(authRequest ->
-                authRequest
-                    .requestMatchers("/public/**").permitAll()
-                    .anyRequest().authenticated()
+            .authorizeHttpRequests(authRequest -> authRequest
+                .requestMatchers("/public/**").permitAll()
+                .anyRequest().authenticated()
             )
-           
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authenticationProvider(authProvider)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
 
