@@ -39,23 +39,7 @@ public class SpringSecurityConfig {
                     .requestMatchers("/public/**").permitAll()
                     .anyRequest().authenticated()
             )
-            .sessionManagement(sessionManager -> 
-                sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authenticationProvider(authProvider)
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            .exceptionHandling(exceptionHandling -> 
-                exceptionHandling
-                    .authenticationEntryPoint((request, response, authException) -> {
-                        response.setContentType("application/json");
-                        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                        response.getWriter().write("{ \"error\": \"Token inválido o faltante\" }");
-                    })
-                    .accessDeniedHandler((request, response, accessDeniedException) -> {
-                        response.setContentType("application/json");
-                        response.setStatus(HttpStatus.FORBIDDEN.value());
-                        response.getWriter().write("{ \"error\": \"No tienes permisos\" }");
-                    })
-            )
+           
             .build();
     }
 
