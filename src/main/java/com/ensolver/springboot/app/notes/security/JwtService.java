@@ -20,6 +20,8 @@ public class JwtService {
     private static final String SECRET_KEY="VGhpcyBpcyBhIHNlY3JldCBrZXkK";
 
     public String getToken(UserDetails user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", user.getAuthorities());
         return getToken(new HashMap<>(), user);
     }
 
@@ -32,6 +34,7 @@ public class JwtService {
             .signWith(getKey(), SignatureAlgorithm.HS256) // ✅ Usa la Key, no la String
             .compact();
     }
+    
 
     private Key getKey() {
        byte[] keyBytes=Decoders.BASE64.decode(SECRET_KEY);
