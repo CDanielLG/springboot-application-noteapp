@@ -36,7 +36,7 @@ public class SpringSecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authRequest -> authRequest
                 .requestMatchers("/public/**").permitAll()
-                .anyRequest().authenticated()
+             
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authProvider)

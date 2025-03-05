@@ -1,6 +1,7 @@
 package com.ensolver.springboot.app.notes.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,9 +45,13 @@ public class RegistrationService {
     }
 
     public AuthResponse register(RegisterRequest request) {
+            if (userRepository.existsByUsername(request.getUsername())) {
+            throw new DataIntegrityViolationException("El usuario ya existe");
+        }
+
         User user = User.builder()
             .username(request.getUsername())
-            .password(passwordEncoder.encode( request.getPassword()))
+            .password(passwordEncoder.encode(request.getPassword()))
             .role(Role.USER)
             .build();
 
